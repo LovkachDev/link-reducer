@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::prefix('api')->group(function () {
+    Route::post('createLink', [\App\Http\Controllers\LinkController::class, 'create'])->name('create.link');
+    Route::post('getProperty', [\App\Http\Controllers\LinkController::class, 'getProperty'])->name('create.property');
+});
