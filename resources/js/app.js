@@ -28,15 +28,32 @@ const app = new Vue({
     el: "#app",
     data() {
         return {
-            projectApp: "Linkerr"
+            projectName: "Linkerr",
+            linkInput: "",
+            shortLinkInput: "",
+            siteLink: 'http://127.0.0.1:8000',
+            siteLink2: 'https://stackoverflow.com',
+            regexp: new RegExp(/^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}$|^https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$/gi)
+
         }
     },
     methods: {
-        addToCart() {
-            this.cart += 1
+        makeLinkShorter() {
+            this.linkInput = this.linkInput.replace(/\s+/gi, ''); 
+            if(this.linkInput.length > 4 && this.regexp.test(this.linkInput)){
+                const data = new URLSearchParams();
+                data.append('link', this.linkInput);
+                fetch(this.siteLink + "/api/createLink", {method: 'POST', mode:'cors', body: data}).then(gotData => gotData.json())
+                .then(response => {
+                    this.shortLinkInput = this.siteLink2 + '/' + response?.shorted;
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
         },
-        updateImage(variantImage) {
-            this.image = variantImage
+        copy() {
+            this.$refs.clone.focus();
+            document.execCommand('copy');
         }
     }
 });

@@ -33,15 +33,39 @@ var app = new Vue({
   el: "#app",
   data: function data() {
     return {
-      projectApp: "Linkerr"
+      projectName: "Linkerr",
+      linkInput: "",
+      shortLinkInput: "",
+      siteLink: 'http://127.0.0.1:8000',
+      siteLink2: 'https://stackoverflow.com',
+      regexp: new RegExp(/^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}$|^https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$/gi)
     };
   },
   methods: {
-    addToCart: function addToCart() {
-      this.cart += 1;
+    makeLinkShorter: function makeLinkShorter() {
+      var _this = this;
+
+      this.linkInput = this.linkInput.replace(/\s+/gi, '');
+
+      if (this.linkInput.length > 4 && this.regexp.test(this.linkInput)) {
+        var data = new URLSearchParams();
+        data.append('link', this.linkInput);
+        fetch(this.siteLink + "/api/createLink", {
+          method: 'POST',
+          mode: 'cors',
+          body: data
+        }).then(function (gotData) {
+          return gotData.json();
+        }).then(function (response) {
+          _this.shortLinkInput = _this.siteLink2 + '/' + (response === null || response === void 0 ? void 0 : response.shorted);
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
     },
-    updateImage: function updateImage(variantImage) {
-      this.image = variantImage;
+    copy: function copy() {
+      this.$refs.clone.focus();
+      document.execCommand('copy');
     }
   }
 });
