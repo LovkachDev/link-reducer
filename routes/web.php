@@ -21,3 +21,5 @@ Route::prefix('api')->group(function () {
     Route::post('createLink', [\App\Http\Controllers\LinkController::class, 'create'])->name('create.link');
     Route::post('getProperty', [\App\Http\Controllers\LinkController::class, 'getProperty'])->name('create.property');
 });
+
+Route::get('{link}', [\App\Http\Controllers\RedirectController::class, 'redirect'])->name('redirect');
